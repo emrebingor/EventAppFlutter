@@ -1,3 +1,4 @@
+import 'package:device_calendar/device_calendar.dart';
 import 'package:event_app/core/base/state/base_view_state.dart';
 import 'package:event_app/data/bloc/home/home_bloc.dart';
 import 'package:event_app/data/bloc/home/home_event.dart';
@@ -29,5 +30,23 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
     if (selectedDate != null) {
       _homeBloc.pickDate(selectedDate);
     }
+  }
+
+  void updateCalendar(Calendar calendar) {
+    _homeBloc.updateCalender(calendar);
+  }
+
+  Future<void> addToCalendar() async {
+    if (eventNameController.text.isEmpty
+        || _homeBloc.state.selectedDate == null
+        || _homeBloc.state.selectedCalendar == null
+    ) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Choose and event name and date")),
+      );
+      return;
+    }
+
+    await _homeBloc.addToCalendar(title: eventNameController.text);
   }
 }

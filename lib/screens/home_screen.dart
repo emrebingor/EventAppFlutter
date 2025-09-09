@@ -45,7 +45,7 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
                           const SizedBox(width: 10),
                           Text(
                             homeBloc.state.selectedDate == null
-                                ? "Seçilmedi"
+                                ? "Not Picked"
                                 : "${homeBloc.state.selectedDate!.day}.${homeBloc.state.selectedDate!.month}.${homeBloc.state.selectedDate!.year}",
                           ),
                         ],
@@ -59,18 +59,23 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
                           items: homeBloc.state.calendars!
                               .map((c) => DropdownMenuItem(
                             value: c.id,
-                            child: Text(c.name ?? "Takvim"),
+                            child: Text(c.name ?? "Calendar"),
                           ))
                               .toList(),
-                          onChanged: (String? value) {
+                          onChanged: (String? calendarId) {
+                            if (calendarId != null) {
+                              final selected = homeBloc.state.calendars!
+                                  .firstWhere((c) => c.id == calendarId);
+                              homeBloc.updateCalender(selected);
+                            }
                           },
                         ),
 
                       const Spacer(),
                       ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: addToCalendar,
                         icon: const Icon(Icons.calendar_today),
-                        label: const Text("Takvime Ekle"),
+                        label: const Text("Add to Calendar"),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
                         ),

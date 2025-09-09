@@ -1,4 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:event_app/core/base/bloc/base_bloc.dart';
 import 'package:event_app/data/bloc/home/home_event.dart';
 import 'package:event_app/data/bloc/home/home_state.dart';
@@ -26,5 +27,30 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
 
   void pickDate(DateTime selectedDate) {
     emit(state.copyWith(selectedDate: selectedDate));
+  }
+
+  void updateCalender(Calendar calendar) {
+    emit(state.copyWith(selectedCalendar: calendar));
+  }
+
+  Future<void> addToCalendar({required String title}) async {
+
+    final tzStart = tz.TZDateTime.from(state.selectedDate!, tz.local);
+    final tzEnd = tzStart.add(const Duration(hours: 1));
+
+    final event = Event(
+      state.selectedCalendar!.id,
+      title: title,
+      start: tzStart,
+      end: tzEnd,
+    );
+
+    final createResult = await _deviceCalendarPlugin.createOrUpdateEvent(event);
+
+    if (createResult!.isSuccess) {
+      emit(state.copyWith());
+    } else {
+      emit(state.copyWith());
+    }
   }
 }
