@@ -1,3 +1,4 @@
+import 'package:device_calendar/device_calendar.dart';
 import 'package:event_app/core/base/state/base_view_state.dart';
 import 'package:event_app/core/base/view/base_view.dart';
 import 'package:event_app/data/bloc/home/home_bloc.dart';
@@ -7,6 +8,8 @@ import 'package:event_app/screens/mixin/home_screen_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+part './sub_screen/home_sub_screen.dart';
+
 final class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -14,7 +17,7 @@ final class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
+final class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
   @override
   Widget build(BuildContext context) {
     return BaseView<HomeBloc, HomeAction, HomeState>(
@@ -22,7 +25,11 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
       child: PopScope(
         canPop: false,
         child: Scaffold(
-          appBar: AppBar(title: const Text("Event App")),
+          appBar: AppBar(
+            title: const Text(
+              "Event App",
+            ),
+          ),
           body: BlocConsumer<HomeBloc, HomeState>(
             listener: blocListener,
             builder: (BuildContext context, HomeState state) {
@@ -31,54 +38,24 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      TextField(
+                      _EventNameTextFieldWidget(
                         controller: eventNameController,
-                        decoration: const InputDecoration(labelText: "Event Name"),
                       ),
                       const SizedBox(height: 20),
-
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: pickDate,
-                            child: const Text("Pick Date"),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            homeBloc.state.selectedDate == null
-                                ? "Not Picked"
-                                : "${homeBloc.state.selectedDate!.day}.${homeBloc.state.selectedDate!.month}.${homeBloc.state.selectedDate!.year}",
-                          ),
-                        ],
+                      _DatePickerFieldWidget(
+                        onTap: pickDate,
+                        selectedDate: homeBloc.state.selectedDate,
                       ),
-
                       const SizedBox(height: 20),
-
-                      if (homeBloc.state.calendars != null && homeBloc.state.calendars!.isNotEmpty)
-                        DropdownButton<String>(
-                          value: homeBloc.state.selectedCalendar?.id,
-                          items: homeBloc.state.calendars!
-                              .map((c) => DropdownMenuItem(
-                            value: c.id,
-                            child: Text(c.name ?? "Calendar"),
-                          )).toList(),
-                          onChanged: (String? calendarId) {
-                            if (calendarId != null) {
-                              final selected = homeBloc.state.calendars!
-                                  .firstWhere((c) => c.id == calendarId);
-                              homeBloc.updateCalender(selected);
-                            }
-                          },
-                        ),
-
+                      homeBloc.state.calendars != null && homeBloc.state.calendars!.isNotEmpty ?
+                        _CalenderSelectionWidget(
+                          id: homeBloc.state.selectedCalendar?.id,
+                          calendar: homeBloc.state.calendars!,
+                          onTap: calendarTypeUpdate,
+                        ) : SizedBox.shrink(),
                       const Spacer(),
-                      ElevatedButton.icon(
-                        onPressed: addToCalendar,
-                        icon: const Icon(Icons.calendar_today),
-                        label: const Text("Add to Calendar"),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
+                      _AddCalenderButtonWidget(
+                        onTap: addToCalendar,
                       ),
                     ],
                   ),

@@ -77,6 +77,11 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
     _homeBloc.updateCalender(calendar);
   }
 
+  void calendarTypeUpdate(String value) {
+    final selected = homeBloc.state.calendars!.firstWhere((c) => c.id == value);
+    homeBloc.updateCalender(selected);
+  }
+
   Future<void> addToCalendar() async {
     if (eventNameController.text.isEmpty
         || _homeBloc.state.selectedDate == null
