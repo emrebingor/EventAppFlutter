@@ -44,7 +44,8 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
 
   Future<void> calendarNavigation() async {
     if (Theme.of(context).platform == TargetPlatform.iOS) {
-      final epochSeconds = (_homeBloc.state.selectedDate!.millisecondsSinceEpoch / 1000).floor();
+      final epochSeconds = (_homeBloc.state.selectedDate!.millisecondsSinceEpoch / 1000)
+          .floor();
       final url = Uri.parse("calshow:$epochSeconds");
       if (await canLaunchUrl(url)) {
         await launchUrl(url);
@@ -53,9 +54,11 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
       final epochMillis = _homeBloc.state.selectedDate!.millisecondsSinceEpoch;
       final url = Uri.parse("content://com.android.calendar/time/$epochMillis");
       if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
+        await launchUrl
+          (url,
+          mode: LaunchMode.externalApplication,
+        );
       }
-      return;
     }
   }
 
@@ -67,10 +70,7 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
       firstDate: now,
       lastDate: DateTime(now.year + 5),
     );
-
-    if (selectedDate != null) {
-      _homeBloc.pickDate(selectedDate);
-    }
+    if (selectedDate != null) _homeBloc.pickDate(selectedDate);
   }
 
   void updateCalendar(Calendar calendar) {
@@ -87,10 +87,12 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
         || _homeBloc.state.selectedDate == null
         || _homeBloc.state.selectedCalendar == null
     ) {
-      _homeBloc.updateDialogStatus(true, 'Fill your event name and date please!');
+      _homeBloc.updateDialogStatus(
+        true,
+        'Fill your event name and date please!',
+      );
       return;
     }
-
     await _homeBloc.addToCalendar(title: eventNameController.text);
   }
 }

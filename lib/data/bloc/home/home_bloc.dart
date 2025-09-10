@@ -9,11 +9,10 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
   HomeBloc() : super(HomeState()) {
     on<HomeInitAction>(_updateCalenderInformation);
   }
-
   final DeviceCalendarPlugin _deviceCalendarPlugin = DeviceCalendarPlugin();
 
-
-  Future<void> _updateCalenderInformation(HomeInitAction event, Emitter<HomeState> emit) async {
+  Future<void> _updateCalenderInformation(HomeInitAction event,
+      Emitter<HomeState> emit) async {
     final permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
     if (permissionsGranted.isSuccess && permissionsGranted.data == false) {
       await _deviceCalendarPlugin.requestPermissions();
@@ -21,7 +20,10 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
 
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     if (calendarsResult.data != null && calendarsResult.data!.isNotEmpty) {
-      emit(state.copyWith(selectedCalendar: calendarsResult.data!.first, calendars: calendarsResult.data));
+      emit(state.copyWith(
+        selectedCalendar: calendarsResult.data!.first,
+        calendars: calendarsResult.data,
+      ));
     }
   }
 
@@ -38,7 +40,6 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
   }
 
   Future<void> addToCalendar({required String title}) async {
-
     final tzStart = tz.TZDateTime.from(state.selectedDate!, tz.local);
     final tzEnd = tzStart.add(const Duration(hours: 1));
 
