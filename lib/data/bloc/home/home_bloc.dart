@@ -33,6 +33,10 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
     emit(state.copyWith(selectedCalendar: calendar));
   }
 
+  void updateDialogStatus(bool status, String message) {
+    emit(state.copyWith(dialogStatus: status, message: message));
+  }
+
   Future<void> addToCalendar({required String title}) async {
 
     final tzStart = tz.TZDateTime.from(state.selectedDate!, tz.local);
@@ -48,9 +52,15 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
     final createResult = await _deviceCalendarPlugin.createOrUpdateEvent(event);
 
     if (createResult!.isSuccess) {
-      emit(state.copyWith());
+      emit(state.copyWith(
+        successDialogStatus: true,
+        message: 'Event successfully added.',
+      ));
     } else {
-      emit(state.copyWith());
+      emit(state.copyWith(
+        dialogStatus: true,
+        message: 'There is a problem with event arrangement. Please try again later.',
+      ));
     }
   }
 }

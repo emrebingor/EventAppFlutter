@@ -23,7 +23,8 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
         canPop: false,
         child: Scaffold(
           appBar: AppBar(title: const Text("Event App")),
-          body: BlocBuilder<HomeBloc, HomeState>(
+          body: BlocConsumer<HomeBloc, HomeState>(
+            listener: blocListener,
             builder: (BuildContext context, HomeState state) {
               return SafeArea(
                 child: Padding(
@@ -32,7 +33,7 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
                     children: [
                       TextField(
                         controller: eventNameController,
-                        decoration: const InputDecoration(labelText: "Etkinlik Adı"),
+                        decoration: const InputDecoration(labelText: "Event Name"),
                       ),
                       const SizedBox(height: 20),
 
@@ -40,7 +41,7 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
                         children: [
                           ElevatedButton(
                             onPressed: pickDate,
-                            child: const Text("Tarih Seç"),
+                            child: const Text("Pick Date"),
                           ),
                           const SizedBox(width: 10),
                           Text(
@@ -60,8 +61,7 @@ class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
                               .map((c) => DropdownMenuItem(
                             value: c.id,
                             child: Text(c.name ?? "Calendar"),
-                          ))
-                              .toList(),
+                          )).toList(),
                           onChanged: (String? calendarId) {
                             if (calendarId != null) {
                               final selected = homeBloc.state.calendars!

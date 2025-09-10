@@ -6,13 +6,19 @@ final class HomeState extends BaseBlocState {
     super.hasError,
     super.errorMessage,
     super.isLoading,
+    this.dialogStatus = false,
+    this.successDialogStatus = false,
     this.selectedDate,
     this.selectedCalendar,
     this.calendars,
+    this.message,
   });
 
   DateTime? selectedDate;
   Calendar? selectedCalendar;
+  bool dialogStatus;
+  bool successDialogStatus;
+  String? message;
   List<Calendar>? calendars;
 
   @override
@@ -22,6 +28,9 @@ final class HomeState extends BaseBlocState {
       selectedDate,
       selectedCalendar,
       calendars,
+      dialogStatus,
+      message,
+      successDialogStatus,
     ];
   }
 
@@ -30,6 +39,9 @@ final class HomeState extends BaseBlocState {
     bool? hasError,
     String? errorMessage,
     bool? isLoading,
+    bool? dialogStatus,
+    bool? successDialogStatus,
+    String? message,
     DateTime? selectedDate,
     Calendar? selectedCalendar,
     List<Calendar>? calendars,
@@ -38,6 +50,9 @@ final class HomeState extends BaseBlocState {
       hasError: hasError ?? false,
       errorMessage: errorMessage ?? '',
       isLoading: isLoading ?? this.isLoading,
+      message: message ?? this.message,
+      dialogStatus: dialogStatus ?? this.dialogStatus,
+      successDialogStatus: successDialogStatus ?? this.successDialogStatus,
       selectedDate: selectedDate ?? this.selectedDate,
       selectedCalendar: selectedCalendar ?? this.selectedCalendar,
       calendars: calendars ?? this.calendars,
