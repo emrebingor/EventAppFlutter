@@ -98,3 +98,33 @@ final class _DatePickerFieldWidget extends StatelessWidget {
     );
   }
 }
+
+final class _PermissionStatusWidget extends StatelessWidget {
+  const _PermissionStatusWidget({
+    required this.onTap,
+  });
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'Your need to change your calendar permission status to use event calendar',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+        SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: onTap,
+          child: Text(
+            'Go to Settings',
+          ),
+        ),
+      ],
+    );
+  }
+}

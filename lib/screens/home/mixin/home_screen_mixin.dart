@@ -4,7 +4,8 @@ import 'package:event_app/core/base/state/base_view_state.dart';
 import 'package:event_app/data/bloc/home/home_bloc.dart';
 import 'package:event_app/data/bloc/home/home_event.dart';
 import 'package:event_app/data/bloc/home/home_state.dart';
-import 'package:event_app/screens/home_screen.dart';
+import 'package:event_app/screens/home/home_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +22,19 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
     });
   }
 
+  VoidCallback? get onResume => () {
+    if (!mounted) return;
+    _homeBloc.add(HomeInitAction());
+  };
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (mounted) {
+        onResume?.call();
+      }
+    }
+  }
+
   Future<void> blocListener(BuildContext context, HomeState state) async {
     if(state.dialogStatus || state.successDialogStatus) {
       showDialog(
@@ -33,7 +47,7 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
               _homeBloc.updateDialogStatus(false, '');
               Navigator.of(context).pop();
               if(state.successDialogStatus) {
-                await calendarNavigation();
+                await calendarNavigation(context);
               }
             },
           );
@@ -42,7 +56,7 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
     }
   }
 
-  Future<void> calendarNavigation() async {
+  Future<void> calendarNavigation(BuildContext context) async {
     if (Theme.of(context).platform == TargetPlatform.iOS) {
       final epochSeconds = (_homeBloc.state.selectedDate!.millisecondsSinceEpoch / 1000)
           .floor();
@@ -94,5 +108,9 @@ mixin HomeScreenMixin on BaseViewState<HomeScreen> {
       return;
     }
     await _homeBloc.addToCalendar(title: eventNameController.text);
+  }
+
+  Future<void> settingsNavigation() async {
+    await openAppSettings();
   }
 }

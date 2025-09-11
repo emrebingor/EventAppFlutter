@@ -1,4 +1,6 @@
 import 'package:device_calendar/device_calendar.dart';
+import 'package:event_app/data/local/event_local_storage.dart';
+import 'package:event_app/data/local/models/event_local_model.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:event_app/core/base/bloc/base_bloc.dart';
 import 'package:event_app/data/bloc/home/home_event.dart';
@@ -13,9 +15,16 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
 
   Future<void> _updateCalenderInformation(HomeInitAction event,
       Emitter<HomeState> emit) async {
+    final EventLocalStorage storage = EventLocalStorage();
+    final List<LocalEvent> events = storage.getEvents();
+
     final permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
-    if (permissionsGranted.isSuccess && permissionsGranted.data == false) {
-      await _deviceCalendarPlugin.requestPermissions();
+    if (!permissionsGranted.isSuccess || permissionsGranted.data == false) {
+      final request = await _deviceCalendarPlugin.requestPermissions();
+      if (!request.isSuccess || request.data == false) {
+        emit(state.copyWith(calendarAccessStatus: true));
+        return;
+      }
     }
 
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
@@ -23,6 +32,8 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
       emit(state.copyWith(
         selectedCalendar: calendarsResult.data!.first,
         calendars: calendarsResult.data,
+        calendarAccessStatus: false,
+        events: events,
       ));
     }
   }
@@ -42,6 +53,7 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
   Future<void> addToCalendar({required String title}) async {
     final tzStart = tz.TZDateTime.from(state.selectedDate!, tz.local);
     final tzEnd = tzStart.add(const Duration(hours: 1));
+    final EventLocalStorage storage = EventLocalStorage();
 
     final event = Event(
       state.selectedCalendar!.id,
@@ -53,6 +65,12 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
     final createResult = await _deviceCalendarPlugin.createOrUpdateEvent(event);
 
     if (createResult!.isSuccess) {
+      await storage.addEvent(
+        title: title,
+        date: tzStart,
+        calendarId: state.selectedCalendar!.id,
+      );
+
       emit(state.copyWith(
         successDialogStatus: true,
         message: 'Event successfully added.',

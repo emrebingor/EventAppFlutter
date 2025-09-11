@@ -4,11 +4,11 @@ import 'package:event_app/core/base/view/base_view.dart';
 import 'package:event_app/data/bloc/home/home_bloc.dart';
 import 'package:event_app/data/bloc/home/home_event.dart';
 import 'package:event_app/data/bloc/home/home_state.dart';
-import 'package:event_app/screens/mixin/home_screen_mixin.dart';
+import 'package:event_app/screens/home/mixin/home_screen_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-part './sub_screen/home_sub_screen.dart';
+part '../home/sub_screen/home_sub_screen.dart';
 
 final class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,7 +17,7 @@ final class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-final class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin {
+final class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMixin, WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return BaseView<HomeBloc, HomeAction, HomeState>(
@@ -35,7 +35,7 @@ final class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMi
             builder: (BuildContext context, HomeState state) {
               return SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16) + const EdgeInsets.only(bottom: 20),
                   child: Column(
                     children: [
                       _EventNameTextFieldWidget(
@@ -47,12 +47,14 @@ final class _HomeScreenState extends BaseViewState<HomeScreen> with HomeScreenMi
                         selectedDate: homeBloc.state.selectedDate,
                       ),
                       const SizedBox(height: 20),
-                      homeBloc.state.calendars != null && homeBloc.state.calendars!.isNotEmpty ?
-                        _CalenderSelectionWidget(
-                          id: homeBloc.state.selectedCalendar?.id,
-                          calendar: homeBloc.state.calendars!,
-                          onTap: calendarTypeUpdate,
-                        ) : SizedBox.shrink(),
+                      homeBloc.state.calendars != null && homeBloc.state.calendars!.isNotEmpty && !homeBloc.state.calendarAccessStatus ?
+                      _CalenderSelectionWidget(
+                        id: homeBloc.state.selectedCalendar?.id,
+                        calendar: homeBloc.state.calendars!,
+                        onTap: calendarTypeUpdate,
+                      ) : _PermissionStatusWidget(
+                        onTap: settingsNavigation,
+                      ),
                       const Spacer(),
                       _AddCalenderButtonWidget(
                         onTap: addToCalendar,
