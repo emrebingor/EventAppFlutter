@@ -1,6 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:event_app/data/local/event_local_storage.dart';
-import 'package:event_app/data/local/models/event_local_model.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:event_app/core/base/bloc/base_bloc.dart';
 import 'package:event_app/data/bloc/home/home_event.dart';
@@ -15,8 +14,6 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
 
   Future<void> _updateCalenderInformation(HomeInitAction event,
       Emitter<HomeState> emit) async {
-    final EventLocalStorage storage = EventLocalStorage();
-    final List<LocalEvent> events = storage.getEvents();
 
     final permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
     if (!permissionsGranted.isSuccess || permissionsGranted.data == false) {
@@ -33,7 +30,6 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
         selectedCalendar: calendarsResult.data!.first,
         calendars: calendarsResult.data,
         calendarAccessStatus: false,
-        events: events,
       ));
     }
   }
@@ -47,7 +43,7 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
   }
 
   void updateDialogStatus(bool status, String message) {
-    emit(state.copyWith(dialogStatus: status, message: message));
+    emit(state.copyWith(dialogStatus: status, successDialogStatus: false, message: message));
   }
 
   Future<void> addToCalendar({required String title}) async {
@@ -69,6 +65,7 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
         title: title,
         date: tzStart,
         calendarId: state.selectedCalendar!.id,
+        deviceEventId: createResult.data,
       );
 
       emit(state.copyWith(

@@ -22,6 +22,7 @@ final class EventLocalStorage {
     required String title,
     required DateTime date,
     String? calendarId,
+    String? deviceEventId,
   }) async {
     final id = const Uuid().v4();
     final event = LocalEvent(
@@ -29,6 +30,7 @@ final class EventLocalStorage {
       title: title,
       date: date,
       calendarId: calendarId,
+      deviceEventId: deviceEventId,
     );
     await _box.put(id, event);
   }

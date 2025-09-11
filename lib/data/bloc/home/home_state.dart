@@ -1,6 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:event_app/core/base/bloc/base_bloc_state.dart';
-import 'package:event_app/data/local/models/event_local_model.dart';
 
 final class HomeState extends BaseBlocState {
   HomeState({
@@ -14,7 +13,6 @@ final class HomeState extends BaseBlocState {
     this.selectedCalendar,
     this.calendars,
     this.message,
-    this.events,
   });
 
   DateTime? selectedDate;
@@ -24,7 +22,6 @@ final class HomeState extends BaseBlocState {
   bool calendarAccessStatus;
   String? message;
   List<Calendar>? calendars;
-  List<LocalEvent>? events;
 
   @override
   List<Object?> get props {
@@ -37,7 +34,6 @@ final class HomeState extends BaseBlocState {
       message,
       successDialogStatus,
       calendarAccessStatus,
-      events,
     ];
   }
 
@@ -53,7 +49,6 @@ final class HomeState extends BaseBlocState {
     DateTime? selectedDate,
     Calendar? selectedCalendar,
     List<Calendar>? calendars,
-    List<LocalEvent>? events,
   }) {
     return HomeState(
       hasError: hasError ?? false,
@@ -66,7 +61,6 @@ final class HomeState extends BaseBlocState {
       selectedDate: selectedDate ?? this.selectedDate,
       selectedCalendar: selectedCalendar ?? this.selectedCalendar,
       calendars: calendars ?? this.calendars,
-      events: events ?? this.events,
     );
   }
 }
