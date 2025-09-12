@@ -47,7 +47,13 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
   }
 
   Future<void> addToCalendar({required String title}) async {
-    final tzStart = tz.TZDateTime.from(state.selectedDate!, tz.local);
+    final selected = state.selectedDate!;
+    final tzStart = tz.TZDateTime(
+      tz.local,
+      selected.year,
+      selected.month,
+      selected.day,
+    );
     final tzEnd = tzStart.add(const Duration(hours: 1));
     final EventLocalStorage storage = EventLocalStorage();
 
@@ -56,6 +62,7 @@ final class HomeBloc extends BaseBloc<HomeAction, HomeState> {
       title: title,
       start: tzStart,
       end: tzEnd,
+      allDay: true,
     );
 
     final createResult = await _deviceCalendarPlugin.createOrUpdateEvent(event);

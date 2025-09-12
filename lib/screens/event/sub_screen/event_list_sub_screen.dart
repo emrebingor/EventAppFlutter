@@ -4,10 +4,12 @@ final class _EventListViewWidget extends StatelessWidget {
   const _EventListViewWidget({
     required this.events,
     required this.onDelete,
+    required this.onTap,
   });
 
   final List<LocalEvent>? events;
   final void Function(LocalEvent event) onDelete;
+  final void Function(LocalEvent event) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,10 @@ final class _EventListViewWidget extends StatelessWidget {
                 foregroundColor: Colors.white,
                 icon: Icons.delete,
                 label: 'Delete',
-                borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
               ),
             ],
           ),
@@ -47,33 +52,36 @@ final class _EventListViewWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          event.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+            child: InkWell(
+              onTap: () => onTap(event),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        Text(
-                          DateFormat('dd/MM/yyyy HH:mm').format(event.date),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
+                          Text(
+                            DateFormat('dd/MM/yyyy').format(event.date),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

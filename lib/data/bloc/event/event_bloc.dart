@@ -26,7 +26,7 @@ final class EventBloc extends BaseBloc<EventAction, EventState> {
   Future<void> _removeEventAction(RemoveEventAction event,
       Emitter<EventState> emit) async {
     final EventLocalStorage storage = EventLocalStorage();
-    await _deviceCalendarPlugin.deleteCalendar(event.calendarId);
+    await _deviceCalendarPlugin.deleteEvent(event.calendarId, event.deviceEventId);
     await storage.removeEvent(event.id);
     final List<LocalEvent> events = storage.getEvents();
 

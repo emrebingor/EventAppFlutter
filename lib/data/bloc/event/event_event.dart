@@ -12,7 +12,8 @@ final class EventInitAction extends EventAction {
 
 @immutable
 final class RemoveEventAction extends EventAction {
-  const RemoveEventAction(this.id, this.calendarId);
+  const RemoveEventAction(this.id, this.calendarId, this.deviceEventId);
   final String id;
   final String calendarId;
+  final String deviceEventId;
 }

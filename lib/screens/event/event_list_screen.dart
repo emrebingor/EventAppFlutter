@@ -46,7 +46,14 @@ final class _EventListScreenState extends BaseViewState<EventListScreen> with Ev
                         child: _EventListViewWidget(
                           events: state.events,
                           onDelete: (LocalEvent event) {
-                            removeEvent(event.id, event.calendarId ?? '');
+                            removeEvent(
+                              event.id,
+                              event.calendarId ?? '',
+                              event.deviceEventId ?? '',
+                            );
+                          },
+                          onTap: (LocalEvent event) {
+                            calendarNavigation(context, event.date);
                           },
                         ),
                       ) : _EmptyEventWidget(),
